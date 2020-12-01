@@ -1,0 +1,3 @@
+USER= ---> oracle username
+PASSWORD= ---> oracle password
+CONNECTIONSTRING= ---> SERVER/INSTANCE
