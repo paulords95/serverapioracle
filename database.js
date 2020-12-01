@@ -1,8 +1,3 @@
-//--select * from e103eqp
-//select * from usu_t560
-
-
-
 const oracledb = require("oracledb");
 
 require('dotenv').config()
@@ -47,34 +42,34 @@ const dbConnectSelect = async (req, res, query, ...parameters) => {
   }
 
 
-  const dbConnectInsert = async (req, res, query, ...parameters) => {
-    try {
-      connection = await oracledb.getConnection({
-        user,
-        password,
-        connectString,
-      });
-  
-      console.log("Conectado a base");
-      result = await connection.execute(
-       query, [...parameters], {autoCommit: true}
-      );
-    } catch (err) {
-      return res.send(err.message);
-    } finally {
-      if (connection) {
-        try {
-          await connection.close();
-          console.log("Conexão fechada");
-        } catch (err) {
-          console.error(err.message);
-        }
+const dbConnectInsert = async (req, res, query, ...parameters) => {
+  try {
+    connection = await oracledb.getConnection({
+      user,
+      password,
+      connectString,
+    });
+
+    console.log("Conectado a base");
+    result = await connection.execute(
+     query, [...parameters], {autoCommit: true}
+    );
+  } catch (err) {
+    return res.send(err.message);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+        console.log("Conexão fechada");
+      } catch (err) {
+        console.error(err.message);
       }
-      console.log(result)
-     return res.send('Registro Gravado')
     }
+    console.log(result)
+   return res.send('Registro Gravado')
   }
+}
 
 
-  exports.dbConnectSelect = dbConnectSelect
-  exports.dbConnectInsert = dbConnectInsert
+exports.dbConnectSelect = dbConnectSelect
+exports.dbConnectInsert = dbConnectInsert
