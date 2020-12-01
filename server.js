@@ -23,6 +23,17 @@ const selectEqpByCode = async (req, res) => {
 
 }
 
+const selectAllEqpNamesAndCode = (req, res) => {
+  const selectAll =  `select codeqp, deseqp from e103eqp`
+
+  dbConnectSelect(req, res, selectAll)
+
+}
+
+const selectAllUsers = (req, res) => {
+  const selectUsers = `select * from usu_t522`;
+  dbConnectSelect(req, res, selectUsers)
+}
 
 const insertNewOS = async (req, res) => {
   const insertQuery =  `INSERT INTO usu_t560 (usu_codemp, usu_numosv, usu_codeqp, usu_deseqp) VALUES (:codEmp, (select MAX(usu_numosv) + 1 from usu_t560), :codEqp, :desEqp)`
@@ -43,6 +54,7 @@ app.get("/", function (req, res) {
 });
 
 
+
 app.get('/api/newos/:codEmp/:codEqp/:desEqp', (req, res)=> {
   //http://localhost:5000/api/newos/23/50/rosca
   insertNewOS(req, res)
@@ -57,6 +69,15 @@ app.get("/api/os", function (req, res) {
 app.get("/api/os/:codEqp", function (req, res) {
   selectEqpByCode(req, res)
 });
+
+app.get('/api/allEqps', (req, res) => {
+  selectAllEqpNamesAndCode(req, res)
+})
+
+
+app.get('/api/allUsers', (req, res) => {
+  selectAllUsers(req, res)
+})
 
 
 app.listen(port, () => console.log("Servidor rodando na porta: ", port));

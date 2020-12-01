@@ -1,3 +1,8 @@
+//--select * from e103eqp
+//select * from usu_t560
+
+
+
 const oracledb = require("oracledb");
 
 require('dotenv').config()
