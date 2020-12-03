@@ -31,7 +31,7 @@ const selectAllEqpNamesAndCode = (req, res) => {
 }
 
 const selectAllUsers = (req, res) => {
-  const selectUsers = `select usu_nomusu, usu_codusu from usu_t522`;
+  const selectUsers = `select usu_nomusu, usu_codusu from usu_t522 ORDER BY 1`;
   dbConnectSelect(req, res, selectUsers)
 }
 
