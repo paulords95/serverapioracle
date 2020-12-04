@@ -80,7 +80,6 @@ app.get("/", (req, res) => {
 app.post('/api/newos/:codUsu/:datGer/:codEqp/:desEqp/:tipOsv', (req, res) => {
 
   req.params.datGer = req.params.datGer.replace(/-/g, '/').substr(0, 10).trim()
-  console.log(req.params.datGer)
   //http://localhost:5000/api/newos/15/04Dec2020/105462/balanca/3
   insertNewOS(req, res)
 })
