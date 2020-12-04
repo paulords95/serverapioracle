@@ -36,15 +36,39 @@ const selectAllUsers = (req, res) => {
 }
 
 const insertNewOS = (req, res) => {
-  const insertQuery =  `INSERT INTO usu_t560 (usu_codemp, usu_numosv, usu_codeqp, usu_deseqp) VALUES (:codEmp, (select MAX(usu_numosv) + 1 from usu_t560), :codEqp, :desEqp)`
+
+  const insertQuery =    `INSERT INTO
+  USU_T560 (
+    usu_codemp,
+    usu_numosv,
+    usu_codusu,
+    usu_datger,
+    usu_codeqp,
+    usu_deseqp,
+    usu_tiposv
+  )
+VALUES
+  (
+    1,
+    (
+      SELECT
+        MAX(usu_numosv) + 1
+      from
+        USU_T560
+    ),
+    :codUsu,:datGer,:codEqp, :desEqp, :tipOsv
+  )
+`
   
   const params = {
-  codEmp: req.params.codEmp,
+  codUsu: req.params.codUsu,
+  datGer: req.params.datGer,
   codEqp:  req.params.codEqp,
-  desEqp: req.params.desEqp
+  desEqp: req.params.desEqp,
+  tipOsv: req.params.tipOsv
 }
 
-dbConnectInsert(req, res, insertQuery, params.codEmp, params.codEqp, params.desEqp)
+dbConnectInsert(req, res, insertQuery,params.codUsu,params.datGer, params.codEqp, params.desEqp, params.tipOsv)
 
 }
 
@@ -53,8 +77,8 @@ app.get("/", (req, res) => {
   res.send("Página inicial");
 });
 
-app.get('/api/newos/:codEmp/:codEqp/:desEqp', (req, res) => {
-  //http://localhost:5000/api/newos/23/50/rosca
+app.get('/api/newos/:codUsu/:datGer/:codEqp/:desEqp/:tipOsv', (req, res) => {
+  //http://localhost:5000/api/newos/15/04122020/105462/balanca/3
   insertNewOS(req, res)
 })
 
