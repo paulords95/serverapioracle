@@ -56,7 +56,7 @@ VALUES
       from
         USU_T560
     ),
-    :codUsu,:datGer,:codEqp, :desEqp, :tipOsv
+    :codUsu,  to_date(:datGer, 'dd/mm/yyyy')  ,:codEqp, :desEqp, :tipOsv
   )
 `
   
@@ -77,8 +77,11 @@ app.get("/", (req, res) => {
   res.send("Página inicial");
 });
 
-app.get('/api/newos/:codUsu/:datGer/:codEqp/:desEqp/:tipOsv', (req, res) => {
-  //http://localhost:5000/api/newos/15/04122020/105462/balanca/3
+app.post('/api/newos/:codUsu/:datGer/:codEqp/:desEqp/:tipOsv', (req, res) => {
+
+  req.params.datGer = req.params.datGer.replace(/-/g, '/').substr(0, 10).trim()
+  console.log(req.params.datGer)
+  //http://localhost:5000/api/newos/15/04Dec2020/105462/balanca/3
   insertNewOS(req, res)
 })
 
