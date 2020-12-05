@@ -71,5 +71,6 @@ const dbConnectInsert = async (req, res, query, ...parameters) => {
 }
 
 
+
 exports.dbConnectSelect = dbConnectSelect
 exports.dbConnectInsert = dbConnectInsert

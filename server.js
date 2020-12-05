@@ -100,4 +100,10 @@ app.get('/api/allUsers', (req, res) => {
   selectAllUsers(req, res)
 })
 
+app.get('/api/checkdb', (req, res) => {
+  res.json({
+    ok: true
+  })
+})
+
 app.listen(port, () => console.log("Servidor rodando na porta: ", port));
