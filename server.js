@@ -56,19 +56,18 @@ VALUES
       from
         USU_T560
     ),
-    :codUsu,  to_date(:datGer, 'dd/mm/yyyy')  ,:codEqp, :desEqp, :tipOsv
+    :codUsu,  SYSDATE  ,:codEqp, :desEqp, :tipOsv
   )
 `
   
   const params = {
   codUsu: req.params.codUsu,
-  datGer: req.params.datGer,
   codEqp:  req.params.codEqp,
   desEqp: req.params.desEqp,
   tipOsv: req.params.tipOsv
 }
 
-dbConnectInsert(req, res, insertQuery,params.codUsu,params.datGer, params.codEqp, params.desEqp, params.tipOsv)
+dbConnectInsert(req, res, insertQuery,params.codUsu, params.codEqp, params.desEqp, params.tipOsv)
 
 }
 
@@ -77,10 +76,7 @@ app.get("/", (req, res) => {
   res.send("Página inicial");
 });
 
-app.post('/api/newos/:codUsu/:datGer/:codEqp/:desEqp/:tipOsv', (req, res) => {
-
-  req.params.datGer = req.params.datGer.replace(/-/g, '/').substr(0, 10).trim()
-  //http://localhost:5000/api/newos/15/04Dec2020/105462/balanca/3
+app.post('/api/newos/:codUsu/:codEqp/:desEqp/:tipOsv', (req, res) => {
   insertNewOS(req, res)
 })
 
