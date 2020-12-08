@@ -1,7 +1,5 @@
 const oracledb = require("oracledb");
-
 require('dotenv').config()
-
 
 const user = process.env.USER;
 const password = process.env.PASSWORD;

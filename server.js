@@ -81,6 +81,7 @@ app.post('/api/newos/:codUsu/:codEqp/:desEqp/:tipOsv', (req, res) => {
 })
 
 app.get("/api/os", (req, res) => {
+  console.log('docker')
   selectAllOS(req, res)
 });
 
@@ -102,4 +103,4 @@ app.get('/api/checkdb', (req, res) => {
   })
 })
 
-app.listen(port, () => console.log("Servidor rodando na porta: ", port));
+app.listen(port, '0.0.0.0', () => console.log("Servidor rodando na porta: ", port));

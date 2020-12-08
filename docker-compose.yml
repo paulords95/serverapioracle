@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  backend:
+    restart: unless-stopped
+    container_name: backend
+    image: serverapioracle
+    networks:
+      - public
+    volumes:
+      - ./Wallet_dev:/opt/oracle/instantclient_19_5/network/admin
+
+networks:
+  public:
