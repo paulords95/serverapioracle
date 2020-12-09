@@ -21,7 +21,7 @@ jobs:
 
       - name: Push worker image
         run: |
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/worker
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/serverapioracle
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
           # Strip "v" prefix from tag name
