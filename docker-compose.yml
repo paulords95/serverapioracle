@@ -4,11 +4,14 @@ services:
   backend:
     restart: unless-stopped
     container_name: backend
-    image: serverapioracle
+    image: serverapioracle:lastest
     networks:
       - public
     volumes:
-      - ./Wallet_dev:/opt/oracle/instantclient_19_5/network/admin
+      - ./Wallet_dev:/opt/oracle/instantclient_19_6/network/admin
+      - ./.env:/home/.env
+    ports:
+      - 5000:5000
 
 networks:
   public:

@@ -1,2 +1,2 @@
 @echo off
-docker build -t serverapioracle .
+docker build -t serverapioracle:latest .
