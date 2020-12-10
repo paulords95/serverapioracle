@@ -6,6 +6,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run
+        env:
+          SERVER_PRIVATE_KEY: ${{ secrets.SERVER_PRIVATE_KEY }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
         run: |
           mkdir -p ~/.ssh
           echo "$SERVER_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
