@@ -15,4 +15,4 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/id_rsa
-          ssh -o StrictHostKeyChecking=no opc@$SERVER_IP "ls"
+          ssh -o StrictHostKeyChecking=no opc@$SERVER_IP "echo '${{ secrets.GITHUB_TOKEN }}' | sudo docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin && sudo docker-compose pull && docker-compose down && docker-compose up -d"
