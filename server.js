@@ -73,7 +73,7 @@ dbConnectInsert(req, res, insertQuery,params.codUsu, params.codEqp, params.desEq
 
 
 app.get("/", (req, res) => {
-  res.send("Página inicial");
+  res.send("Página inicial | API Oracle");
 });
 
 app.post('/api/newos/:codUsu/:codEqp/:desEqp/:tipOsv', (req, res) => {
