@@ -4,7 +4,7 @@ services:
   backend:
     restart: unless-stopped
     container_name: backend
-    image: serverapioracle:lastest
+    image: docker.pkg.github.com/paulords95/serverapioracle/serverapioracle:latest
     networks:
       - public
     volumes:
