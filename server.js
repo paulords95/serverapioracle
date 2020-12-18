@@ -45,7 +45,8 @@ const insertNewOS = (req, res) => {
     usu_datger,
     usu_codeqp,
     usu_deseqp,
-    usu_tiposv
+    usu_tiposv,
+    usu_desanm
   )
 VALUES
   (
@@ -56,7 +57,7 @@ VALUES
       from
         USU_T560
     ),
-    :codUsu,  SYSDATE  ,:codEqp, :desEqp, :tipOsv
+    :codUsu,  SYSDATE  ,:codEqp, :desEqp, :tipOsv, :usu_desanm
   )
 `
   
@@ -64,10 +65,11 @@ VALUES
   codUsu: req.params.codUsu,
   codEqp:  req.params.codEqp,
   desEqp: req.params.desEqp,
-  tipOsv: req.params.tipOsv
+  tipOsv: req.params.tipOsv,
+  desAnm: req.params.desAnm
 }
 
-dbConnectInsert(req, res, insertQuery,params.codUsu, params.codEqp, params.desEqp, params.tipOsv)
+dbConnectInsert(req, res, insertQuery,params.codUsu, params.codEqp, params.desEqp, params.tipOsv, params.desAnm)
 
 }
 
@@ -76,7 +78,7 @@ app.get("/", (req, res) => {
   res.send("Página inicial | API Oracle");
 });
 
-app.post('/api/newos/:codUsu/:codEqp/:desEqp/:tipOsv', (req, res) => {
+app.post('/api/newos/:codUsu/:codEqp/:desEqp/:tipOsv/:desAnm', (req, res) => {
   insertNewOS(req, res)
 })
 
