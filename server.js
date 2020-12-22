@@ -75,8 +75,6 @@ dbConnectInsert(req, res, insertQuery,params.codUsu, params.codEqp, params.desEq
 
 
 
-
-
 const selectLastItem = async (req, res) => {
 
   const query = `SELECT usu_deseqp, usu_datger, usu_desanm from USU_T560 where usu_numosv = (SELECT
