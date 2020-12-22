@@ -6,8 +6,6 @@ const port = 5000;
 const {dbConnectSelect, dbConnectInsert} = require('./database')
 
 
-
-
 const selectAllOS = (req, res) => {
   const selectAll =  `select usu_numosv,usu_codeqp ,usu_deseqp from usu_t560`
 
@@ -30,10 +28,12 @@ const selectAllEqpNamesAndCode = (req, res) => {
 
 }
 
-const selectAllUsers = (req, res) => {
+const selectAllUsers = async (req, res) => {
   const selectUsers = `select usu_nomusu, usu_codusu from usu_t522 ORDER BY 1`;
-  dbConnectSelect(req, res, selectUsers)
+  const result = await dbConnectSelect(req, res, selectUsers)
+  return result
 }
+
 
 const insertNewOS = (req, res) => {
 
@@ -74,6 +74,20 @@ dbConnectInsert(req, res, insertQuery,params.codUsu, params.codEqp, params.desEq
 }
 
 
+
+
+
+const selectLastItem = async (req, res) => {
+
+  const query = `SELECT usu_deseqp, usu_datger, usu_desanm from USU_T560 where usu_numosv = (SELECT
+    MAX(usu_numosv)
+  from
+    USU_T560)`
+  
+    const result = await dbConnectSelect(req, res, query)
+    return result
+  }
+
 app.get("/", (req, res) => {
   res.send("Página inicial | API Oracle");
 });
@@ -82,21 +96,54 @@ app.post('/api/newos/:codUsu/:codEqp/:desEqp/:tipOsv/:desAnm', (req, res) => {
   insertNewOS(req, res)
 })
 
-app.get("/api/os", (req, res) => {
-  console.log('docker')
-  selectAllOS(req, res)
+app.get("/api/os",  (req, res) => {
+
+selectAllOS(req, res)
+
 });
 
-app.get("/api/os/:codEqp", (req, res) => {
-  selectEqpByCode(req, res)
+app.get("/api/os/:codEqp",  (req, res) => {
+selectEqpByCode(req, res)
+
 });
 
-app.get('/api/allEqps', (req, res) => {
-  selectAllEqpNamesAndCode(req, res)
+app.get('/api/allEqps',  (req, res) => {
+selectAllEqpNamesAndCode(req, res)
+
 })
 
-app.get('/api/allUsers', (req, res) => {
-  selectAllUsers(req, res)
+app.get('/api/allUsers',  async (req, res) => {
+  const data = await selectAllUsers(req, res)
+
+  const rows = data.rows
+
+  let response = []
+  for (let i of rows) {
+
+    response.push({
+      name: i[0],
+      cod: i[1]
+    })
+  }
+  res.json(response)
+})
+
+app.get('/api/lastos', async (req, res) => {
+  const data = await selectLastItem(req, res)
+
+
+
+  const rows = data.rows
+  const unformattedDate = rows[0][1].toLocaleString().slice(0, 10).split("-")
+  const dateText = unformattedDate[2] + "/" + unformattedDate[1] + "/" + unformattedDate[0];
+
+  const response = {
+    nameEqp: rows[0][0],
+    date: dateText,
+    anomaly: rows[0][2]
+  }
+
+  res.send(response)
 })
 
 app.get('/api/checkdb', (req, res) => {
