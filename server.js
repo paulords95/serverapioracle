@@ -6,6 +6,8 @@ const port = 5000;
 const {dbConnectSelect, dbConnectInsert} = require('./database')
 
 
+
+
 const selectAllOS = (req, res) => {
   const selectAll =  `select usu_numosv,usu_codeqp ,usu_deseqp from usu_t560`
 
@@ -13,18 +15,20 @@ const selectAllOS = (req, res) => {
 
 }
 
-const selectEqpByCode = (req, res) => {
+const selectEqpByCode = async (req, res) => {
   const selectQuery = `select usu_numosv,usu_codeqp ,usu_deseqp from usu_t560 WHERE usu_codEqp = :codEqp`
   const params = req.params.codEqp
+  const result = await dbConnectSelect(req, res, selectQuery, params)
 
-  dbConnectSelect(req, res, selectQuery, params)
+  return result
 
 }
 
-const selectAllEqpNamesAndCode = (req, res) => {
+const selectAllEqpNamesAndCode = async (req, res) => {
   const selectAll =  `select codeqp, deseqp from e103eqp`
 
-  dbConnectSelect(req, res, selectAll)
+  const result = await dbConnectSelect(req, res, selectAll)
+  return result
 
 }
 
@@ -75,6 +79,8 @@ dbConnectInsert(req, res, insertQuery,params.codUsu, params.codEqp, params.desEq
 
 
 
+
+
 const selectLastItem = async (req, res) => {
 
   const query = `SELECT usu_deseqp, usu_datger, usu_desanm from USU_T560 where usu_numosv = (SELECT
@@ -85,6 +91,29 @@ const selectLastItem = async (req, res) => {
     const result = await dbConnectSelect(req, res, query)
     return result
   }
+
+
+  const selectLastFiveItems = async (req, res) => {
+
+    const query = `SELECT *
+
+    FROM (SELECT usu_deseqp, usu_datger, usu_desanm, usu_numosv
+ 
+           FROM usu_t560 where usu_numosv <= (SELECT
+     MAX(usu_numosv) - 1
+   from
+     USU_T560)
+ 
+          ORDER BY usu_numosv DESC
+ 
+         )
+ 
+ WHERE ROWNUM <= 5`
+    
+      const result = await dbConnectSelect(req, res, query)
+      return result
+    }
+
 
 app.get("/", (req, res) => {
   res.send("Página inicial | API Oracle");
@@ -105,9 +134,20 @@ selectEqpByCode(req, res)
 
 });
 
-app.get('/api/allEqps',  (req, res) => {
-selectAllEqpNamesAndCode(req, res)
+app.get('/api/allEqps', async  (req, res) => {
+    const data = await selectAllEqpNamesAndCode(req, res)
 
+    const rows = data.rows
+
+  let response = []
+  for (let i of rows) {
+
+    response.push({
+      cod: i[0],
+      name: i[1]
+    })
+  }
+  res.json(response)
 })
 
 app.get('/api/allUsers',  async (req, res) => {
@@ -142,6 +182,32 @@ app.get('/api/lastos', async (req, res) => {
   }
 
   res.send(response)
+})
+
+
+app.get('/api/lastfiveitems', async (req, res) => {
+  const data = await selectLastFiveItems(req, res)
+
+  const rows = data.rows
+
+  const unformattedDate = rows[0][1].toLocaleString().slice(0, 10).split("-")
+  const dateText = unformattedDate[2] + "/" + unformattedDate[1] + "/" + unformattedDate[0];
+
+
+  let response = []
+
+
+
+  for (let i of rows) {
+
+    response.push({
+      name: i[0],
+      date: dateText,
+      descAnm: i[2],
+      key: i[3]
+    })
+  }
+  res.json(response)
 })
 
 app.get('/api/checkdb', (req, res) => {
