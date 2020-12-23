@@ -32,9 +32,7 @@ const dbConnectSelect = async (req, res, query, ...parameters) => {
       if (result.rows.length == 0) {
         return res.send("query não retornou nada");
       } else {
-        return res.json({
-          data: result
-        });
+        return result
       }
     }
   }
