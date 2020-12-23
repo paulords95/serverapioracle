@@ -87,7 +87,7 @@ const selectLastItem = async (req, res) => {
   }
 
 app.get("/", (req, res) => {
-  res.send("Página inicial | API Oracle");
+  res.send("Página inicial | API Oracle App");
 });
 
 app.post('/api/newos/:codUsu/:codEqp/:desEqp/:tipOsv/:desAnm', (req, res) => {
