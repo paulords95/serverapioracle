@@ -177,7 +177,7 @@ app.get('/api/lastos', async (req, res) => {
 
   const response = {
     nameEqp: rows[0][0],
-    date: dateText,
+    date: unformattedDate[0],
     anomaly: rows[0][2]
   }
 
@@ -202,7 +202,7 @@ app.get('/api/lastfiveitems', async (req, res) => {
 
     response.push({
       name: i[0],
-      date: dateText,
+      date: unformattedDate[0],
       descAnm: i[2],
       key: i[3]
     })
