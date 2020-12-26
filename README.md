@@ -1,1 +1,1 @@
-API em Node.js e banco de dados Oracle.
+API em Node.js conectando a banco de dados Oracle.
