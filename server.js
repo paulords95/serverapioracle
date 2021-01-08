@@ -2,46 +2,36 @@ const express = require("express");
 const app = express();
 const port = 5000;
 
-
-const {dbConnectSelect, dbConnectInsert} = require('./database')
-
-
-
+const { dbConnectSelect, dbConnectInsert } = require("./database");
 
 const selectAllOS = (req, res) => {
-  const selectAll =  `select usu_numosv,usu_codeqp ,usu_deseqp from usu_t560`
+  const selectAll = `select usu_numosv,usu_codeqp ,usu_deseqp from usu_t560`;
 
-  dbConnectSelect(req, res, selectAll)
+  dbConnectSelect(req, res, selectAll);
+};
+const selectEqpByCode = async (req, res, code) => {
+  const selectQuery = `select usu_deseqp, usu_desanm, usu_datger from usu_t560 where usu_numosv = (SELECT MAX(usu_numosv) from USU_T560 where usu_codeqp = :codEqp)`;
+  const params = code;
+  const result = await dbConnectSelect(req, res, selectQuery, params);
 
-}
-
-const selectEqpByCode = async (req, res) => {
-  const selectQuery = `select usu_numosv,usu_codeqp ,usu_deseqp from usu_t560 WHERE usu_codEqp = :codEqp`
-  const params = req.params.codEqp
-  const result = await dbConnectSelect(req, res, selectQuery, params)
-
-  return result
-
-}
+  return result;
+};
 
 const selectAllEqpNamesAndCode = async (req, res) => {
-  const selectAll =  `select codeqp, deseqp from e103eqp`
+  const selectAll = `select codeqp, deseqp from e103eqp`;
 
-  const result = await dbConnectSelect(req, res, selectAll)
-  return result
-
-}
+  const result = await dbConnectSelect(req, res, selectAll);
+  return result;
+};
 
 const selectAllUsers = async (req, res) => {
   const selectUsers = `select usu_nomusu, usu_codusu from usu_t522 ORDER BY 1`;
-  const result = await dbConnectSelect(req, res, selectUsers)
-  return result
-}
-
+  const result = await dbConnectSelect(req, res, selectUsers);
+  return result;
+};
 
 const insertNewOS = (req, res) => {
-
-  const insertQuery =    `INSERT INTO
+  const insertQuery = `INSERT INTO
   USU_T560 (
     usu_codemp,
     usu_numosv,
@@ -63,39 +53,40 @@ VALUES
     ),
     :codUsu,  SYSDATE  ,:codEqp, :desEqp, :tipOsv, :usu_desanm
   )
-`
-  
+`;
+
   const params = {
-  codUsu: req.params.codUsu,
-  codEqp:  req.params.codEqp,
-  desEqp: req.params.desEqp,
-  tipOsv: req.params.tipOsv,
-  desAnm: req.params.desAnm
-}
+    codUsu: req.params.codUsu,
+    codEqp: req.params.codEqp,
+    desEqp: req.params.desEqp,
+    tipOsv: req.params.tipOsv,
+    desAnm: req.params.desAnm,
+  };
 
-dbConnectInsert(req, res, insertQuery,params.codUsu, params.codEqp, params.desEqp, params.tipOsv, params.desAnm)
-
-}
-
-
-
-
+  dbConnectInsert(
+    req,
+    res,
+    insertQuery,
+    params.codUsu,
+    params.codEqp,
+    params.desEqp,
+    params.tipOsv,
+    params.desAnm
+  );
+};
 
 const selectLastItem = async (req, res) => {
-
   const query = `SELECT usu_deseqp, usu_datger, usu_desanm from USU_T560 where usu_numosv = (SELECT
     MAX(usu_numosv)
   from
-    USU_T560)`
-  
-    const result = await dbConnectSelect(req, res, query)
-    return result
-  }
+    USU_T560)`;
 
+  const result = await dbConnectSelect(req, res, query);
+  return result;
+};
 
-  const selectLastFiveItems = async (req, res) => {
-
-    const query = `SELECT *
+const selectLastFiveItems = async (req, res) => {
+  const query = `SELECT *
 
     FROM (SELECT usu_deseqp, usu_datger, usu_desanm, usu_numosv
  
@@ -108,112 +99,132 @@ const selectLastItem = async (req, res) => {
  
          )
  
- WHERE ROWNUM <= 5`
-    
-      const result = await dbConnectSelect(req, res, query)
-      return result
-    }
+ WHERE ROWNUM <= 5`;
 
+  const result = await dbConnectSelect(req, res, query);
+  return result;
+};
 
 app.get("/", (req, res) => {
   res.send("Página inicial | API Oracle");
 });
 
-app.post('/api/newos/:codUsu/:codEqp/:desEqp/:tipOsv/:desAnm', (req, res) => {
-  insertNewOS(req, res)
-})
-
-app.get("/api/os",  (req, res) => {
-
-selectAllOS(req, res)
-
+app.post("/api/newos/:codUsu/:codEqp/:desEqp/:tipOsv/:desAnm", (req, res) => {
+  insertNewOS(req, res);
 });
 
-app.get("/api/os/:codEqp",  (req, res) => {
-selectEqpByCode(req, res)
-
+app.get("/api/os", (req, res) => {
+  selectAllOS(req, res);
 });
 
-app.get('/api/allEqps', async  (req, res) => {
-    const data = await selectAllEqpNamesAndCode(req, res)
+app.get("/api/os/:codEqp", (req, res) => {
+  selectEqpByCode(req, res);
+});
 
-    const rows = data.rows
+app.get("/api/allEqps", async (req, res) => {
+  const data = await selectAllEqpNamesAndCode(req, res);
 
-  let response = []
+  const rows = data.rows;
+
+  let response = [];
   for (let i of rows) {
-
     response.push({
       cod: i[0],
-      name: i[1]
-    })
+      name: i[1],
+    });
   }
-  res.json(response)
-})
+  res.json(response);
+});
 
-app.get('/api/allUsers',  async (req, res) => {
-  const data = await selectAllUsers(req, res)
+app.get("/api/allUsers", async (req, res) => {
+  const data = await selectAllUsers(req, res);
 
-  const rows = data.rows
+  const rows = data.rows;
 
-  let response = []
+  let response = [];
   for (let i of rows) {
-
     response.push({
       name: i[0],
-      cod: i[1]
-    })
+      cod: i[1],
+    });
   }
-  res.json(response)
-})
+  res.json(response);
+});
 
-app.get('/api/lastos', async (req, res) => {
-  const data = await selectLastItem(req, res)
+app.get("/api/lastos", async (req, res) => {
+  const data = await selectLastItem(req, res);
 
-
-
-  const rows = data.rows
-  const unformattedDate = rows[0][1].toLocaleString().slice(0, 10).split("-")
-  const dateText = unformattedDate[2] + "/" + unformattedDate[1] + "/" + unformattedDate[0];
+  const rows = data.rows;
+  const unformattedDate = rows[0][1].toLocaleString().slice(0, 10).split("-");
+  const dateText =
+    unformattedDate[2] + "/" + unformattedDate[1] + "/" + unformattedDate[0];
 
   const response = {
     nameEqp: rows[0][0],
     date: unformattedDate[0],
-    anomaly: rows[0][2]
-  }
+    anomaly: rows[0][2],
+  };
 
-  res.send(response)
-})
+  res.send(response);
+});
 
+app.get("/api/lastfiveitems", async (req, res) => {
+  const data = await selectLastFiveItems(req, res);
 
-app.get('/api/lastfiveitems', async (req, res) => {
-  const data = await selectLastFiveItems(req, res)
+  const rows = data.rows;
 
-  const rows = data.rows
+  const unformattedDate = rows[0][1].toLocaleString().slice(0, 10).split("-");
+  const dateText =
+    unformattedDate[2] + "/" + unformattedDate[1] + "/" + unformattedDate[0];
 
-  const unformattedDate = rows[0][1].toLocaleString().slice(0, 10).split("-")
-  const dateText = unformattedDate[2] + "/" + unformattedDate[1] + "/" + unformattedDate[0];
-
-
-  let response = []
-
-
+  let response = [];
 
   for (let i of rows) {
-
     response.push({
       name: i[0],
       date: unformattedDate[0],
       descAnm: i[2],
-      key: i[3]
-    })
+      key: i[3],
+    });
   }
-  res.json(response)
-})
+  res.json(response);
+});
 
-app.get('/api/checkdb', (req, res) => {
+app.get("/api/geteqpbycode/:cod", async (req, res) => {
+  const code = parseInt(req.params.cod);
+  if (isNaN(code)) {
+    res.send("Código inválido");
+    return;
+  }
+  const data = await selectEqpByCode(req, res, code);
+  let response = [];
+
+  const unformattedDate = data.rows[0][2]
+    .toLocaleString()
+    .slice(0, 10)
+    .split("-");
+  const dateText =
+    unformattedDate[2] + "/" + unformattedDate[1] + "/" + unformattedDate[0];
+
+  if (data.rows != undefined) {
+    const rows = data.rows;
+    for (let i of rows) {
+      response.push({
+        name: i[0],
+        anomaly: i[1],
+        date: dateText,
+      });
+    }
+    res.send(response);
+  }
+});
+
+app.get("/api/checkdb", (req, res) => {
   res.json({
-    ok: true
-  })
-})
+    ok: true,
+  });
+});
 
-app.listen(port, '0.0.0.0', () => console.log("Servidor rodando na porta: ", port));
+app.listen(port, "0.0.0.0", () =>
+  console.log("Servidor rodando na porta: ", port)
+);
